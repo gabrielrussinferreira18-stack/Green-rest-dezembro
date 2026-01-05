@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Green Rest | December Comparison Report</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:rgba(17,28,52,.55);
+      --card:rgba(17,28,52,.45);
+      --line:rgba(255,255,255,.10);
+      --text:#eaf0ff;
+      --muted:#aab7d6;
+      --accent:#39d98a;
+      --accent2:#4aa3ff;
+      --warn:#ffcc66;
+      --danger:#ff5c7a;
+      --shadow:0 18px 40px rgba(0,0,0,.35);
+      --r:18px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 18% -10%, rgba(57,217,138,.16), transparent 60%),
+        radial-gradient(900px 600px at 92% -10%, rgba(74,163,255,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg), #070b14 72%);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:26px 16px 64px}
+
+    /* Top */
+    .top{
+      display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      padding:18px 20px;border:1px solid var(--line);border-radius:var(--r);
+      background:var(--panel);box-shadow:var(--shadow)
+    }
+    .brand{display:flex;gap:16px;align-items:center}
+    .logo img{width:88px;height:88px;object-fit:contain;display:block}
+    .title h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .title p{margin:6px 0 0;color:var(--muted);font-size:12.5px;line-height:1.35}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border:1px solid var(--line);border-radius:999px;
+      background:rgba(11,18,32,.55);color:var(--muted);font-size:12px;white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--accent)}
+
+    /* Hero */
+    .hero{
+      margin-top:16px;
+      display:grid;grid-template-columns: 1.2fr 1fr;gap:14px;
+    }
+    .heroCard{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .heroMedia{
+      height:100%;
+      min-height:220px;
+      background:rgba(11,18,32,.35);
+      display:flex;
+    }
+    .heroMedia img{
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+    .heroCopy{padding:18px 18px 16px}
+    .heroCopy h2{margin:0 0 8px;font-size:20px}
+    .heroCopy p{margin:0;color:var(--muted);line-height:1.6;font-size:13px}
+    .heroHighlights{
+      display:grid;gap:10px;padding:16px;
+    }
+    .highlight{
+      border:1px solid var(--line);
+      background:rgba(11,18,32,.40);
+      border-radius:16px;
+      padding:12px 12px;
+    }
+    .highlight .k{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+    .highlight .v{margin-top:6px;font-weight:900;font-size:20px}
+    .highlight .s{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4}
+    .up{color:var(--accent)}
+    .down{color:var(--danger)}
+
+    /* Sections */
+    .section{margin-top:18px}
+    .sectionTitle{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      margin:0 2px 10px;
+    }
+    .sectionTitle h3{margin:0;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px}
+    .sectionTitle span{color:var(--muted);font-size:12px}
+
+    .grid{display:grid;gap:12px}
+    .cols3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cols2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .card h4{margin:0 0 10px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px}
+    .kpiVal{font-size:26px;font-weight:900}
+    .kpiSub{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
+
+    /* Comparison Bars */
+    .compareList{display:grid;gap:10px;margin-top:6px}
+    .row{
+      display:grid;grid-template-columns:160px 1fr 1fr 150px;gap:12px;align-items:center;
+    }
+    .lbl{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar{height:12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);overflow:hidden}
+    .fillPrev{height:100%;background:linear-gradient(90deg, rgba(170,183,214,.55), rgba(170,183,214,.25));width:50%}
+    .fillDec{height:100%;background:linear-gradient(90deg, rgba(57,217,138,.95), rgba(74,163,255,.95));width:60%}
+    .delta{
+      display:flex;justify-content:flex-end;gap:10px;align-items:center;flex-wrap:wrap;
+      font-size:12px;color:var(--muted);
+    }
+    .tag{
+      padding:5px 10px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(11,18,32,.55);font-weight:800;font-size:12px;
+    }
+    .tagUp{color:var(--accent)}
+    .tagDown{color:var(--danger)}
+    .tagMid{color:var(--warn)}
+
+    /* Nice Chart (SVG) */
+    .chartWrap{padding:14px 14px 8px}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:12px}
+    .key{display:inline-flex;gap:8px;align-items:center}
+    .sw{width:14px;height:3px;border-radius:999px;background:var(--accent)}
+    .sw2{background:rgba(170,183,214,.7)}
+    .chartNote{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
+
+    /* Table */
+    table{
+      width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);
+      border-radius:16px;overflow:hidden;background:rgba(11,18,32,.35)
+    }
+    th,td{padding:12px;border-bottom:1px solid var(--line);font-size:12px;text-align:left}
+    th{background:rgba(17,28,52,.55);color:var(--text)}
+    td{color:var(--muted)}
+    tr:last-child td{border-bottom:none}
+
+    /* Insight blocks */
+    .good{
+      border:1px solid rgba(57,217,138,.22);
+      background:rgba(57,217,138,.08);
+      border-radius:16px;padding:14px;color:var(--text);line-height:1.6;font-size:13px
+    }
+    .warn{
+      border:1px solid rgba(255,204,102,.22);
+      background:rgba(255,204,102,.08);
+      border-radius:16px;padding:14px;color:var(--text);line-height:1.6;font-size:13px
+    }
+    ul{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:13px}
+
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr}
+      .cols3,.cols2{grid-template-columns:1fr}
+      .row{grid-template-columns:140px 1fr 1fr}
+      .delta{justify-content:flex-start}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- TOP -->
+    <div class="top">
+      <div class="brand">
+        <div class="logo"><img src="logogreen.png" alt="Green Rest Logo"></div>
+        <div class="title">
+          <h1>Green Rest — Performance Report (Comparison)</h1>
+          <p>Previous Report vs December • Leads, Traffic & Profile Actions</p>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="pill"><span class="dot"></span> Period: <b>Previous vs December</b></div>
+        <div class="pill">Channel: <b>Ads / Meta</b></div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="heroCard">
+        <div class="heroMedia">
+          <img src="foto-colchao.png" alt="Mattress">
+        </div>
+      </div>
+
+      <div class="heroCard">
+        <div class="heroCopy">
+          <h2>Executive Summary</h2>
+          <p>
+            December delivered a strong scale phase: visibility increased significantly,
+            lead volume grew, and efficiency improved through a lower CPL. While CTR dropped
+            during the scale, conversion into leads remained healthy — indicating growth
+            with controlled cost.
+          </p>
+        </div>
+        <div class="heroHighlights">
+          <div class="highlight">
+            <div class="k">Leads</div>
+            <div class="v"><span class="up">37</span> <span style="color:var(--muted);font-weight:800;">(+10)</span></div>
+            <div class="s">Previous: 27 → December: 37 <span class="up">( +37.0% )</span></div>
+          </div>
+          <div class="highlight">
+            <div class="k">CPL</div>
+            <div class="v"><span class="up">$8.89</span></div>
+            <div class="s">Previous: $9.51 → December: $8.89 <span class="up">( −6.5% )</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI CARDS (DECEMBER) -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>December Snapshot</h3>
+        <span>Key results for December</span>
+      </div>
+
+      <div class="grid cols3">
+        <div class="card">
+          <h4>Leads</h4>
+          <div class="kpiVal">37</div>
+          <div class="kpiSub">Total leads captured in December.</div>
+        </div>
+        <div class="card">
+          <h4>Spend</h4>
+          <div class="kpiVal">$403.14</div>
+          <div class="kpiSub">Total ad investment in December.</div>
+        </div>
+        <div class="card">
+          <h4>Cost per Lead</h4>
+          <div class="kpiVal">$8.89</div>
+          <div class="kpiSub">Efficiency improved compared to previous report.</div>
+        </div>
+
+        <div class="card">
+          <h4>Impressions</h4>
+          <div class="kpiVal">25,474</div>
+          <div class="kpiSub">High visibility scale in December.</div>
+        </div>
+        <div class="card">
+          <h4>Reach</h4>
+          <div class="kpiVal">19,380</div>
+          <div class="kpiSub">Unique people reached in December.</div>
+        </div>
+        <div class="card">
+          <h4>Link Clicks</h4>
+          <div class="kpiVal">316</div>
+          <div class="kpiSub">Clicks to learn more / landing page.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEAUTIFUL CHART -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Growth Index Chart</h3>
+        <span>Normalized comparison (Previous = 100)</span>
+      </div>
+
+      <div class="card chartWrap">
+        <!-- We normalize: Previous=100. December index = (dec/prev)*100
+             Metrics: Leads 137, Impr 425, Reach 624, Clicks 486, ProfileVisits 91, Followers 108, CTR 60 -->
+        <svg viewBox="0 0 980 320" width="100%" height="320" role="img" aria-label="Comparison Chart">
+          <!-- Padding -->
+          <defs>
+            <linearGradient id="gDec" x1="0" x2="1">
+              <stop offset="0" stop-color="rgba(57,217,138,.95)"/>
+              <stop offset="1" stop-color="rgba(74,163,255,.95)"/>
+            </linearGradient>
+            <linearGradient id="gPrev" x1="0" x2="1">
+              <stop offset="0" stop-color="rgba(170,183,214,.70)"/>
+              <stop offset="1" stop-color="rgba(170,183,214,.35)"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Axes -->
+          <rect x="0" y="0" width="980" height="320" fill="transparent"/>
+          <!-- grid lines -->
+          <g stroke="rgba(255,255,255,.10)" stroke-width="1">
+            <line x1="70" y1="40" x2="940" y2="40"/>
+            <line x1="70" y1="90" x2="940" y2="90"/>
+            <line x1="70" y1="140" x2="940" y2="140"/>
+            <line x1="70" y1="190" x2="940" y2="190"/>
+            <line x1="70" y1="240" x2="940" y2="240"/>
+            <line x1="70" y1="290" x2="940" y2="290"/>
+          </g>
+
+          <!-- y labels (index) -->
+          <g fill="rgba(170,183,214,.95)" font-size="12">
+            <text x="22" y="294">0</text>
+            <text x="12" y="244">100</text>
+            <text x="12" y="194">200</text>
+            <text x="12" y="144">300</text>
+            <text x="12" y="94">400</text>
+            <text x="12" y="44">500+</text>
+          </g>
+
+          <!-- x labels -->
+          <g fill="rgba(170,183,214,.95)" font-size="12">
+            <text x="90"  y="312">Leads</text>
+            <text x="210" y="312">Impr.</text>
+            <text x="330" y="312">Reach</text>
+            <text x="450" y="312">Clicks</text>
+            <text x="570" y="312">CTR</text>
+            <text x="690" y="312">Profile</text>
+            <text x="820" y="312">Followers</text>
+          </g>
+
+          <!-- Helper: map index to y (0..500) range)
+               y = 290 - (index/500)*250  (cap at 500)
+          -->
+          <!-- PREVIOUS (100) line across all points -->
+          <polyline
+            fill="none" stroke="url(#gPrev)" stroke-width="4"
+            points="
+              110,240
+              230,240
+              350,240
+              470,240
+              590,240
+              710,240
+              850,240
+            "/>
+
+          <!-- DECEMBER index line -->
+          <!-- indices: Leads 137, Impr 425, Reach 624(capped 500), Clicks 486, CTR 60, Profile 91, Followers 108 -->
+          <polyline
+            fill="none" stroke="url(#gDec)" stroke-width="4"
+            points="
+              110,221.5
+              230,77.5
+              350,40
+              470,47
+              590,260
+              710,244.5
+              850,236
+            "/>
+
+          <!-- Points -->
+          <g>
+            <!-- prev points -->
+            <g fill="rgba(170,183,214,.85)">
+              <circle cx="110" cy="240" r="5"/><circle cx="230" cy="240" r="5"/><circle cx="350" cy="240" r="5"/>
+              <circle cx="470" cy="240" r="5"/><circle cx="590" cy="240" r="5"/><circle cx="710" cy="240" r="5"/>
+              <circle cx="850" cy="240" r="5"/>
+            </g>
+            <!-- dec points -->
+            <g fill="rgba(57,217,138,.95)">
+              <circle cx="110" cy="221.5" r="5"/>
+              <circle cx="230" cy="77.5" r="5"/>
+              <circle cx="350" cy="40" r="5"/>
+              <circle cx="470" cy="47" r="5"/>
+              <circle cx="590" cy="260" r="5"/>
+              <circle cx="710" cy="244.5" r="5"/>
+              <circle cx="850" cy="236" r="5"/>
+            </g>
+          </g>
+
+          <!-- Tooltip labels (simple) -->
+          <g fill="rgba(234,240,255,.95)" font-size="12" font-weight="700">
+            <text x="98"  y="208">137</text>
+            <text x="216" y="64">425</text>
+            <text x="336" y="28">500+</text>
+            <text x="456" y="35">486</text>
+            <text x="578" y="276">60</text>
+            <text x="695" y="232">91</text>
+            <text x="836" y="224">108</text>
+          </g>
+        </svg>
+
+        <div class="legend">
+          <span class="key"><span class="sw sw2"></span> Previous Report (baseline = 100)</span>
+          <span class="key"><span class="sw"></span> December (index vs baseline)</span>
+        </div>
+        <div class="chartNote">
+          This chart compares metrics using a normalized index where the previous report equals 100.
+          Values above 100 indicate growth. Reach is capped visually at 500+ due to extreme scale.
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARISON BARS (CLEAR) -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Metric-by-Metric Comparison</h3>
+        <span>Previous vs December (values and deltas)</span>
+      </div>
+
+      <div class="card">
+        <div class="compareList">
+          <!-- Helper notes:
+               Previous: Leads 27 / Spend 256.71 / CPL 9.51 / Impr 5996 / Reach 3105 / Clicks 65 / CTR 2.25 / Profile 148 / Followers 24
+               December:  Leads 37 / Spend 403.14 / CPL 8.89 / Impr 25474 / Reach 19380 / Clicks 316 / CTR 1.35 / Profile 134 / Followers 26
+          -->
+
+          <div class="row">
+            <div class="lbl">Leads</div>
+            <div class="bar"><div class="fillPrev" style="width:73%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:100%"></div></div>
+            <div class="delta"><span class="tag tagUp">+10</span><span class="tag tagUp">+37.0%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Spend</div>
+            <div class="bar"><div class="fillPrev" style="width:64%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:100%"></div></div>
+            <div class="delta"><span class="tag tagMid">+$146.43</span><span class="tag tagMid">+57.0%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Cost per Lead (CPL)</div>
+            <div class="bar"><div class="fillPrev" style="width:100%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:93%"></div></div>
+            <div class="delta"><span class="tag tagUp">-$0.62</span><span class="tag tagUp">-6.5%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Impressions</div>
+            <div class="bar"><div class="fillPrev" style="width:24%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:100%"></div></div>
+            <div class="delta"><span class="tag tagUp">+19,478</span><span class="tag tagUp">+324.9%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Reach</div>
+            <div class="bar"><div class="fillPrev" style="width:16%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:100%"></div></div>
+            <div class="delta"><span class="tag tagUp">+16,275</span><span class="tag tagUp">+524.3%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Link Clicks</div>
+            <div class="bar"><div class="fillPrev" style="width:21%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:100%"></div></div>
+            <div class="delta"><span class="tag tagUp">+251</span><span class="tag tagUp">+386.2%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">CTR</div>
+            <div class="bar"><div class="fillPrev" style="width:100%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:60%"></div></div>
+            <div class="delta"><span class="tag tagDown">-0.90 pp</span><span class="tag tagDown">-40.0%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Profile Visits</div>
+            <div class="bar"><div class="fillPrev" style="width:100%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:90%"></div></div>
+            <div class="delta"><span class="tag tagDown">-14</span><span class="tag tagDown">-9.5%</span></div>
+          </div>
+
+          <div class="row">
+            <div class="lbl">Followers</div>
+            <div class="bar"><div class="fillPrev" style="width:92%"></div></div>
+            <div class="bar"><div class="fillDec" style="width:100%"></div></div>
+            <div class="delta"><span class="tag tagUp">+2</span><span class="tag tagUp">+8.3%</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE (for clarity) -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Numbers Table</h3>
+        <span>Previous vs December</span>
+      </div>
+
+      <div class="card" style="padding:0">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Previous</th>
+              <th>December</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Leads</td><td>27</td><td>37</td></tr>
+            <tr><td>Spend</td><td>$256.71</td><td>$403.14</td></tr>
+            <tr><td>CPL</td><td>$9.51</td><td>$8.89</td></tr>
+            <tr><td>Impressions</td><td>5,996</td><td>25,474</td></tr>
+            <tr><td>Reach</td><td>3,105</td><td>19,380</td></tr>
+            <tr><td>Link Clicks</td><td>65</td><td>316</td></tr>
+            <tr><td>CTR</td><td>2.25%</td><td>1.35%</td></tr>
+            <tr><td>Profile Visits</td><td>148</td><td>134</td></tr>
+            <tr><td>Followers</td><td>24</td><td>26</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INSIGHTS + PROJECTION -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Insights & Projection</h3>
+        <span>What this growth means</span>
+      </div>
+
+      <div class="grid cols2">
+        <div class="good">
+          <b>What improved (and why it matters):</b><br>
+          December proves the campaign can scale with control. Visibility expanded dramatically (reach and impressions),
+          clicks increased 4.8x, and lead volume grew while CPL dropped. This combination indicates stronger distribution
+          without losing conversion efficiency — the healthiest signal when increasing budget.
+          <ul>
+            <li><b>Leads up</b> (+37%) while <b>CPL down</b> (−6.5%) → better efficiency.</li>
+            <li><b>Click volume up</b> (+386%) → traffic capacity increased.</li>
+            <li>Scale effects naturally reduce CTR; the key is cost-to-lead (which improved).</li>
+          </ul>
+        </div>
+
+        <div class="warn">
+          <b>What to watch (and what to do next):</b><br>
+          CTR dropped and profile visits slightly decreased — this suggests the campaign reached broader audiences.
+          The next performance jump will come from improving “click → lead” conversion and tightening creative messaging.
+          <ul>
+            <li>Launch 3 creative angles: <b>athletes recovery</b>, <b>seniors pain relief</b>, <b>back pain support</b>.</li>
+            <li>Optimize landing flow: shorter form, stronger headline, clearer CTA.</li>
+            <li>Run remarketing for clickers to increase leads without proportional spend.</li>
+          </ul>
+          <b>Projection:</b> if we keep December’s scale and improve click-to-lead conversion, lead volume should rise
+          without CPL increasing — turning reach growth into predictable demand.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
