@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Green Rest | Relatório Comparativo (Dezembro)</title>
+
+  <style>
+    :root{
+      /* Base (inspirado no logo: verde + azul) */
+      --green:#39d98a;
+      --blue:#4aa3ff;
+
+      --bg1:#071020;
+      --bg2:#050a14;
+
+      --panel: rgba(13, 22, 44, .58);
+      --card: rgba(13, 22, 44, .48);
+      --line: rgba(255,255,255,.12);
+
+      --text:#eef3ff;
+      --muted:#aab7d6;
+
+      --warn:#ffcc66;
+      --danger:#ff5c7a;
+
+      --shadow: 0 18px 45px rgba(0,0,0,.42);
+      --r: 18px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+
+      /* Fundo degradê “meio verde meio azul” (premium) */
+      background:
+        radial-gradient(1200px 700px at 18% -10%, color-mix(in oklab, var(--green) 22%, transparent), transparent 60%),
+        radial-gradient(1000px 650px at 92% -12%, color-mix(in oklab, var(--blue) 22%, transparent), transparent 58%),
+        linear-gradient(135deg,
+          color-mix(in oklab, var(--green) 18%, var(--bg1)),
+          color-mix(in oklab, var(--blue) 18%, var(--bg1)) 55%,
+          var(--bg2)
+        );
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+    .wrap{max-width:1120px;margin:0 auto;padding:26px 16px 72px}
+
+    /* Header */
+    .top{
+      display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      padding:18px 20px;border:1px solid var(--line);border-radius:var(--r);
+      background:var(--panel);box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;gap:16px;align-items:center}
+    .logo img{width:88px;height:88px;object-fit:contain;display:block}
+    .title h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .title p{margin:6px 0 0;color:var(--muted);font-size:12.5px;line-height:1.35}
+
+    .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border:1px solid var(--line);border-radius:999px;
+      background:rgba(6,12,26,.45);color:var(--muted);font-size:12px;white-space:nowrap;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+
+    /* Link (Drive) */
+    .driveBtn{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 14px;border-radius:999px;border:1px solid var(--line);
+      background: linear-gradient(90deg, color-mix(in oklab, var(--green) 22%, rgba(6,12,26,.55)), color-mix(in oklab, var(--blue) 22%, rgba(6,12,26,.55)));
+      text-decoration:none;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+      font-size:12.5px;color:var(--text);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .driveBtn:hover{transform: translateY(-1px); filter:brightness(1.05)}
+    .ico{width:16px;height:16px;display:inline-block}
+    .ico svg{width:16px;height:16px;display:block}
+
+    /* Hero */
+    .hero{
+      margin-top:16px;
+      display:grid;grid-template-columns: 1.15fr 1fr;gap:14px;
+    }
+    .heroCard{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .heroMedia{
+      height:100%;
+      min-height:230px;
+      background:rgba(6,12,26,.35);
+      display:flex;
+    }
+    .heroMedia img{
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+    .heroCopy{padding:18px 18px 16px}
+    .heroCopy h2{margin:0 0 8px;font-size:20px}
+    .heroCopy p{margin:0;color:var(--muted);line-height:1.65;font-size:13px}
+
+    .heroHighlights{
+      display:grid;gap:10px;padding:16px;
+    }
+    .highlight{
+      border:1px solid var(--line);
+      background:rgba(6,12,26,.40);
+      border-radius:16px;
+      padding:12px 12px;
+      display:flex;gap:12px;align-items:flex-start;
+    }
+    .hiIcon{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid var(--line);
+      background:linear-gradient(135deg,
+        color-mix(in oklab, var(--green) 25%, rgba(6,12,26,.55)),
+        color-mix(in oklab, var(--blue) 25%, rgba(6,12,26,.55))
+      );
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .highlight .k{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+    .highlight .v{margin-top:6px;font-weight:900;font-size:20px}
+    .highlight .s{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4}
+    .up{color:var(--green)}
+    .down{color:var(--danger)}
+
+    /* Seções */
+    .section{margin-top:18px}
+    .sectionTitle{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      margin:0 2px 10px;
+    }
+    .sectionTitle h3{margin:0;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px}
+    .sectionTitle span{color:var(--muted);font-size:12px}
+
+    .grid{display:grid;gap:12px}
+    .cols3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cols2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+    .card{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+      backdrop-filter: blur(10px);
+    }
+    .card h4{margin:0 0 10px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px}
+    .kpiVal{font-size:26px;font-weight:900}
+    .kpiSub{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
+
+    /* Tarefas (executadas) com ícones */
+    .tasks{
+      border:1px solid color-mix(in oklab, var(--blue) 25%, rgba(255,255,255,.10));
+      background: rgba(74,163,255,.08);
+      border-radius:16px;
+      padding:14px;
+      line-height:1.65;
+      font-size:13px;
+    }
+    .tasks b{color:var(--text)}
+    .taskList{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:10px}
+    .taskItem{
+      display:flex; gap:12px; align-items:flex-start;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(6,12,26,.35);
+    }
+    .taskIcon{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid var(--line);
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--green) 20%, rgba(6,12,26,.55)),
+        color-mix(in oklab, var(--blue) 20%, rgba(6,12,26,.55))
+      );
+      display:grid;place-items:center; flex:0 0 auto;
+    }
+    .taskText{color:var(--muted); font-size:13px; line-height:1.6}
+    .chip{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:8px 12px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(6,12,26,.40);
+      color:var(--muted);font-size:12px;margin-top:12px;
+    }
+
+    /* Tabela */
+    .tableCard{padding:0; overflow:hidden}
+    table{
+      width:100%;border-collapse:separate;border-spacing:0;border:0;
+      background:rgba(6,12,26,.25)
+    }
+    th,td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:12px;text-align:left}
+    th{
+      background:rgba(13,22,44,.70);
+      color:var(--text);
+      /* sticky on larger screens only (mobile uses horizontal scroll) */
+    }
+    td{color:var(--muted)}
+    tr:last-child td{border-bottom:none}
+
+    /* Gráfico profissional (SVG) */
+    .chartWrap{padding:14px 14px 12px}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:12px}
+    .key{display:inline-flex;gap:8px;align-items:center}
+    .sw{width:14px;height:3px;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--blue))}
+    .sw2{background:rgba(170,183,214,.7)}
+    .chartNote{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.6}
+
+    /* Blocos de insights */
+    .good{
+      border:1px solid rgba(57,217,138,.22);
+      background:rgba(57,217,138,.08);
+      border-radius:16px;padding:14px;color:var(--text);line-height:1.65;font-size:13px
+    }
+    .warn{
+      border:1px solid rgba(255,204,102,.22);
+      background:rgba(255,204,102,.08);
+      border-radius:16px;padding:14px;color:var(--text);line-height:1.65;font-size:13px
+    }
+    .good ul,.warn ul{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.75;font-size:13px}
+
+
+    /* ===== NOVO QUADRO: Otimizações Técnicas e Estratégicas (fora do escopo) ===== */
+    .execBox{
+      padding:16px;
+      border:1px solid color-mix(in oklab, var(--green) 22%, var(--line));
+      background: linear-gradient(180deg, rgba(57,217,138,.06), rgba(74,163,255,.05));
+    }
+    .execHeader{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .execGrid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap:12px;
+    }
+    .execCol{
+      border:1px solid var(--line);
+      background:rgba(6,12,26,.35);
+      border-radius:16px;
+      padding:14px;
+    }
+    .execCol h4{
+      margin:0 0 10px;
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.35px;
+    }
+    .execList{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:13px;
+    }
+    .execList li{margin:6px 0}
+    .execList ul{margin:8px 0 0; padding-left:18px}
+    .execFooter{
+      margin-top:12px;
+      display:grid;
+      gap:10px;
+    }
+    .execBlock{
+      border:1px solid var(--line);
+      background:rgba(13,22,44,.35);
+      border-radius:16px;
+      padding:14px;
+    }
+    .execBlock h4{
+      margin:0 0 8px;
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.35px;
+    }
+    .execBlock p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+
+    .execHighlights{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .execMeta{
+      margin-top:12px;
+      padding-top:10px;
+      border-top:1px dashed var(--line);
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:baseline;
+    }
+    .execMeta .tag{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.35px;
+      color:var(--muted);
+    }
+    .execMeta .value{
+      font-weight:900;
+      font-size:14px;
+      color:var(--green);
+    }
+    .execMeta .note{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+    .execList{
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    /* ===== Filtro por mês (final do relatório) ===== */
+    .monthFilter{
+      display:grid;
+      gap:12px;
+    }
+
+    .monthControls{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .selectWrap{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .selectWrap label{
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    .selectWrap select{
+      width:100%;
+
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+
+      background: rgba(6,12,26,.55);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      outline:none;
+      min-width: 220px;
+    }
+
+    .monthPanel{
+      border:1px solid var(--line);
+      background: rgba(6,12,26,.28);
+      border-radius: 16px;
+      padding:14px;
+      box-shadow: var(--shadow);
+    }
+
+    .monthPanelHeader{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      margin-bottom:10px;
+    }
+
+    .monthPanelHeader b{
+      font-size:14px;
+    }
+
+    .monthPanelHeader span{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .monthGrid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:10px;
+    }
+
+    .monthMini{
+      border:1px solid var(--line);
+      background: rgba(13,22,44,.40);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .monthMini .k{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+
+    .monthMini .v{
+      margin-top:6px;
+      font-size:18px;
+      font-weight:900;
+    }
+
+    /* Responsivo */
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr}
+      .cols3,.cols2{grid-template-columns:1fr}
+      .monthGrid{ grid-template-columns: 1fr; }
+      .execGrid{ grid-template-columns:1fr; }
+      .execHighlights{ justify-content:flex-start; }
+
+
+    }
+  
+    
+    .chartCompareRow{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .chartCompareRow .pill{
+      font-size:11.5px;
+      padding:7px 10px;
+      white-space:normal;
+    }
+    @media (max-width: 600px){
+      .chartCompareRow{ gap:6px; }
+      .chartCompareRow .pill{ width:100%; }
+    }
+
+    /* ===== Mobile first refinements ===== */
+    /* Better tap targets + less cramped layout on small screens */
+    @media (max-width: 600px){
+      .wrap{padding:18px 12px 56px}
+      .top{padding:14px 14px; gap:12px}
+      .brand{gap:12px}
+      .logo img{width:64px;height:64px}
+      .title h1{font-size:16px; line-height:1.25}
+      .title p{font-size:12px}
+      .meta{width:100%}
+      .pill{padding:8px 10px; font-size:11.5px; white-space:normal}
+      .driveBtn{width:100%; justify-content:center; padding:12px 14px}
+
+      .heroCopy{padding:14px}
+      .heroCopy h2{font-size:18px}
+      .heroCopy p{font-size:13px}
+      .heroMedia{min-height:180px}
+
+      .heroHighlights{padding:12px}
+      .highlight{padding:12px}
+      .highlight .v{font-size:18px}
+      .hiIcon{width:32px;height:32px;border-radius:12px}
+
+      .card{padding:14px}
+      .kpiVal{font-size:22px}
+      .kpiSub{font-size:12px}
+
+      .tasks{padding:12px}
+      .taskItem{padding:10px}
+      .taskText{font-size:13px}
+      .chip{width:100%; justify-content:flex-start; white-space:normal}
+
+      /* Tables: allow horizontal scroll, avoid clipped content */
+      .tableCard{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--r)}
+      table{min-width:640px}
+      th,td{padding:12px 12px}
+
+      /* Chart: prevent squish, allow scroll if needed */
+      .chartWrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+      .chartWrap svg{min-width:720px; height:260px}
+      .legend{gap:10px}
+
+      /* Exec box readability */
+      .execBox{padding:14px}
+      .execCol{padding:12px}
+      .execList{font-size:13.5px; line-height:1.75}
+      .execHeader{gap:8px}
+      .execHighlights{justify-content:flex-start}
+      .execMeta{gap:6px}
+    }
+
+    /* Ultra small devices */
+    @media (max-width: 380px){
+      .title h1{font-size:15px}
+      .chartWrap svg{height:240px}
+      table{min-width:700px} /* keeps columns legible */
+    }
+
+  
+    @media (min-width: 701px){
+      th{position:sticky; top:0;}
+    }
+/* hover doesn't exist; avoid flashing */
+      #uxTip{ max-width: 85vw; }
+    }
+
+  
+    /* ===== Tooltips (hover + touch) ===== */
+    .tipTarget{ cursor: help; }
+    .tipRow{ cursor: help; }
+    .tipSvg{ cursor: help; }
+
+    #uxTip{
+      position:fixed;
+      z-index:9999;
+      max-width:300px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(10,16,30,.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius:14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.38);
+      color: rgba(238,243,255,.96);
+      font-size:12.5px;
+      line-height:1.35;
+      opacity:0;
+      transform: translate(-50%, -8px);
+      pointer-events:none;
+      transition: opacity .12s ease, transform .12s ease;
+    }
+    #uxTip.show{ opacity:1; transform: translate(-50%, 0); }
+    #uxTip:after{
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:-7px;
+      width:12px;
+      height:12px;
+      transform: translateX(-50%) rotate(45deg);
+      background:rgba(10,16,30,.92);
+      border-right:1px solid rgba(255,255,255,.14);
+      border-bottom:1px solid rgba(255,255,255,.14);
+    }
+    #uxTip.below:after{
+      top:-7px;
+      bottom:auto;
+      transform: translateX(-50%) rotate(225deg);
+      border-right:none;
+      border-bottom:none;
+      border-left:1px solid rgba(255,255,255,.14);
+      border-top:1px solid rgba(255,255,255,.14);
+    }
+
+    /* Tooltip content helpers */
+    #uxTip .tTitle{font-weight:900; font-size:13px; margin-bottom:6px;}
+    #uxTip .tLine{margin:3px 0;}
+    #uxTip .tMuted{color:rgba(220,228,245,.78);}
+    #uxTip b{color:rgba(238,243,255,.98);}
+    svg .tipTarget{pointer-events:all;}
+
+    /* Subtle affordance only on desktop */
+    @media (hover:hover){
+      .tipTarget:hover, tr.tipRow:hover{
+        outline: 1px dashed rgba(57,217,138,.24);
+        outline-offset: 4px;
+      }
+    }
+    @media (max-width: 600px){
+      #uxTip{ max-width: 86vw; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- TOP -->
+    <div class="top">
+      <div class="brand">
+        <div class="logo"><img src="logogreen.png" alt="Green Rest Logo"></div>
+        <div class="title">
+          <h1>Green Rest — Relatório Comparativo de Performance</h1>
+          <p>Comparação: Relatório anterior vs Dezembro • Leads, Tráfego, Ações de Perfil e Otimizações no Site</p>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="pill"><span class="dot"></span> Período: <b>Novembro vs Dezembro</b></div>
+        <div class="pill">Canal: <b>Anúncios (Meta / Ads)</b></div>
+
+        <a class="driveBtn" href="https://drive.google.com/drive/folders/1bHgmjgFGDfuoYtM3r7esSNT2aXnt1fC1?usp=sharing" target="_blank" rel="noopener">
+          <span class="ico" aria-hidden="true">
+            <!-- ícone de link -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M10 14a5 5 0 0 1 0-7l1.2-1.2a5 5 0 0 1 7 7L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M14 10a5 5 0 0 1 0 7l-1.2 1.2a5 5 0 0 1-7-7L7 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <b>Abrir Drive</b>
+        </a>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="heroCard">
+        <div class="heroMedia">
+          <img src="foto-colchao.png" alt="Produto / Colchão">
+        </div>
+      </div>
+
+      <div class="heroCard">
+        <div class="heroCopy">
+          <h2>Resumo Executivo</h2>
+          <p>
+            Em dezembro, houve uma fase clara de escala: o alcance e as impressões cresceram de forma agressiva,
+            os cliques aumentaram fortemente e o volume de leads subiu, com melhora de eficiência (CPL menor).
+            O CTR caiu durante a escala — um efeito comum quando ampliamos distribuição — mas o custo por lead
+            permaneceu saudável, indicando crescimento com controle.
+          </p>
+        </div>
+
+        <div class="heroHighlights">
+          <div class="highlight">
+            <div class="hiIcon" aria-hidden="true">
+              <!-- ícone: alvo -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M12 21a9 9 0 1 1 9-9" stroke="white" stroke-opacity=".92" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 17a5 5 0 1 1 5-5" stroke="white" stroke-opacity=".92" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 13a1 1 0 1 1 1-1" stroke="white" stroke-opacity=".92" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="k">Leads</div>
+              <div class="v"><span class="up">37</span> <span style="color:var(--muted);font-weight:800;">(+10)</span></div>
+              <div class="s">Novembro: 27 → Dezembro: 37 <span class="up">( +37,0% )</span></div>
+            </div>
+          </div>
+
+          <div class="highlight">
+            <div class="hiIcon" aria-hidden="true">
+              <!-- ícone: moeda -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M12 21c4.418 0 8-4.03 8-9s-3.582-9-8-9-8 4.03-8 9 3.582 9 8 9Z" stroke="white" stroke-opacity=".92" stroke-width="2"/>
+                <path d="M9.5 10.5c0-1.2 1-2 2.5-2s2.5.8 2.5 2-1 1.6-2.5 2-2.5.8-2.5 2 1 2 2.5 2 2.5-.8 2.5-2" stroke="white" stroke-opacity=".92" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="k">CPL</div>
+              <div class="v"><span class="up">US$ 8,89</span></div>
+              <div class="s">Novembro: US$ 9,51 → Dezembro: US$ 8,89 <span class="up">( −6,5% )</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPIs Dezembro -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Panorama de Dezembro</h3>
+        <span>Principais resultados do mês</span>
+      </div>
+
+      <div class="grid cols3">
+        <div class="card tipTarget" data-tip-key="kpi_cpl" tipTarget" data-tip="Leads: contatos gerados no mês (preencheram formulário / viraram lead)."><h4><span class="ico" aria-hidden="true" style="vertical-align:-3px;margin-right:8px">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 3h10a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M9 7h6M9 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>Leads</h4>
+          <div class="kpiVal">37</div>
+          <div class="kpiSub">Total de leads capturados em dezembro.</div>
+        </div>
+
+        <div class="card tipTarget" data-tip="Investimento: quanto foi gasto em anúncios no mês.">
+          <h4><span class="ico" aria-hidden="true" style="vertical-align:-3px;margin-right:8px">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M3 7a3 3 0 0 1 3-3h12a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M3 9h16a2 2 0 0 1 2 2v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V9Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M17 13h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>Investimento</h4>
+          <div class="kpiVal">US$ 403,14</div>
+          <div class="kpiSub">Total investido em anúncios no mês.</div>
+        </div>
+
+        <div class="card tipTarget" data-tip="CPL: custo por lead (quanto custou, em média, cada lead). Quanto mais baixo é melhor.">
+          <h4><span class="ico" aria-hidden="true" style="vertical-align:-3px;margin-right:8px">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 16l6-6 4 4 6-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>CPL</h4>
+          <div class="kpiVal">US$ 8,89</div>
+          <div class="kpiSub">Custo médio por lead (melhor que novembro).</div>
+        </div>
+
+        <div class="card tipTarget" data-tip="Impressões: quantas vezes seus anúncios foram exibidos (pode repetir para a mesma pessoa).">
+          <h4><span class="ico" aria-hidden="true" style="vertical-align:-3px;margin-right:8px">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>Impressões</h4>
+          <div class="kpiVal">25.474</div>
+          <div class="kpiSub">Volume de exibição dos anúncios no período.</div>
+        </div>
+
+        <div class="card tipTarget" data-tip="Alcance: pessoas únicas que viram seus anúncios (sem repetição).">
+          <h4><span class="ico" aria-hidden="true" style="vertical-align:-3px;margin-right:8px">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M16 11a4 4 0 1 0-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M19 8a3 3 0 1 1-5 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>Alcance</h4>
+          <div class="kpiVal">19.380</div>
+          <div class="kpiSub">Pessoas únicas alcançadas.</div>
+        </div>
+
+        <div class="card tipTarget" data-tip="Cliques no link: quantas pessoas clicaram em “Saiba mais / Link”.">
+          <h4><span class="ico" aria-hidden="true" style="vertical-align:-3px;margin-right:8px">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 4l12 8-7 2-2 7L7 4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>Cliques no Link</h4>
+          <div class="kpiVal">316</div>
+          <div class="kpiSub">Cliques em “Saiba mais / Link”.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarefas executadas -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Tarefas executadas no Shopify</h3>
+        <span>Otimizações no tema/site que já estão no ar</span>
+      </div>
+
+      <div class="tasks">
+        <b>Todas as mudanças já foram feitas no tema já foram publicadas.</b>
+
+        <ul class="taskList">
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M3 12l9 9 9-9-9-9H3v9Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M7 7h.01" stroke="white" stroke-width="4" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Ajuste de preços conforme requisitado.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M4 7h16M4 12h10M4 17h16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Link “Shop” do menu principal direcionado para coleção geral (todos os produtos).</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <rect x="4" y="8" width="16" height="8" rx="4" stroke="white" stroke-width="2"/>
+                <path d="M10 12h4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Textos “Buy Now” nos banners alterados para “Shop Now”, alinhando com o redirecionamento.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z" stroke="white" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="taskText">Coleção “Our Mattresses” na home ajustada para exibir 8 produtos por página.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 8v8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <path d="M4 6h16v12H4V6Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Adição do botão “View all” na coleção “Our Mattresses”.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <rect x="7" y="3" width="10" height="18" rx="2" stroke="white" stroke-width="2"/>
+                <path d="M5 12h2M17 12h2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Mobile: coleção “Our Mattresses” em formato carrossel.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M4 6h16M7 12h10M10 18h4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Adicionado filtro vertical no canto lateral esquerdo para melhor navegação.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="white" stroke-width="2"/>
+                <path d="M19.4 15a7.9 7.9 0 0 0 .1-2l2-1.5-2-3.4-2.4 1a7.8 7.8 0 0 0-1.7-1l-.3-2.6H10l-.3 2.6a7.8 7.8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.5a7.9 7.9 0 0 0 .1 2l-2 1.5 2 3.4 2.4-1c.5.4 1.1.7 1.7 1l.3 2.6h4.8l.3-2.6c.6-.3 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.5Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="taskText">Instalação do app nativo “Search & Discovery” para controle avançado de filtros.</div>
+          </li>
+
+          <li class="taskItem">
+            <div class="taskIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M9 18h6M10 22h4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 2a7 7 0 0 0-4 12c1 1 1 2 1 3h6c0-1 0-2 1-3A7 7 0 0 0 12 2Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="taskText"><b>Padronização futura:</b> nomes de variantes para habilitar filtro “Size” na loja.</div>
+          </li>
+        </ul>
+
+        <div class="chip">
+          <span class="dot" aria-hidden="true"></span>
+          Impacto esperado: melhor navegação → mais descoberta de produtos → maior conversão de cliques em leads.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- NOVO QUADRO: Otimizações Técnicas e Estratégicas fora do escopo -->
+    <div class="section" id="execScopeBox">
+      <div class="sectionTitle">
+        <h3>Otimizações Técnicas e Estratégicas feitas fora do escopo</h3>
+        <span>Atualização — ações adicionais implementadas</span>
+      </div>
+
+      <div class="card execBox">
+        <div class="execHeader">
+          <div class="pill"><span class="dot"></span> Alteração registrada: <b>entregas extras fora do escopo inicial</b></div>
+          <div class="pill">Foco: <b>SEO • Arquitetura • Aquisição • CRM</b></div>
+          <div class="execHighlights">
+            <div class="pill">Economia: <b>US$ 240/ano</b></div>
+            <div class="pill">LPs criadas: <b>2</b></div>
+            <div class="pill">CRM: <b>HubSpot rastreado</b></div>
+          </div>
+        </div>
+
+        <div class="execGrid">
+          <div class="execCol">
+            <h4>Resumo das ações implementadas</h4>
+            <ul class="execList">
+              <li><b>Arquitetura/SEO:</b> reorganização da arquitetura de domínios, corrigindo a estrutura que prejudicava autoridade, relevância e performance orgânica.</li>
+              <li><b>Domínio principal:</b> consolidação de <b>greenrestmattress.com</b> na Shopify + desativação do Framer (<b>US$ 120/ano</b>).</li>
+              <li><b>Corte de custo:</b> cancelamento do Framer do site Hiberis (renovação em janeiro) (<b>US$ 120/ano</b>).</li>
+              <li><b>Aquisição:</b> criação de LPs por intenção:
+                <ul>
+                  <li><b>sleep.greenrestmattress.com</b> — dores nas costas relacionadas ao sono (tráfego qualificado e conversão).</li>
+                  <li><b>athletes.greenrestmattress.com</b> — recuperação física e performance de atletas (posicionamento no segmento).</li>
+                </ul>
+              </li>
+              <li><b>CRM/Tracking:</b> integração total com <b>HubSpot</b> (CTAs, formulários e origem) para visão completa do funil e comportamento.</li>
+            </ul>
+          </div>
+
+          <div class="execCol">
+            <h4>Impactos esperados</h4>
+            <ul class="execList">
+              <li>Fortalecimento da autoridade do domínio principal e consolidação da presença digital da marca.</li>
+              <li>Melhoria progressiva do posicionamento orgânico no Google.</li>
+              <li>Redução de custos operacionais recorrentes.</li>
+              <li>Aumento da geração de leads qualificados.</li>
+              <li>Maior previsibilidade, controle e visibilidade do processo comercial, do primeiro contato à conversão.</li>
+            </ul>
+
+        
+          </div>
+        </div>
+
+        <div class="execFooter">
+          <div class="execBlock">
+            <h4>Conclusão executiva</h4>
+            <p>
+              As ações realizadas alinham SEO, performance digital e operação comercial, criando uma base sólida para crescimento orgânico sustentável.
+              A consolidação da estrutura técnica, aliada à segmentação de páginas por intenção de busca e à integração com o CRM, reduz a perda de leads
+              e garante que as oportunidades geradas possam ser mensuradas, nutridas e convertidas de forma estratégica.
+            </p>
+          </div>
+
+          <div class="execBlock">
+            <h4>Próximos passos recomendados</h4>
+            <ol class="execList">
+              <li>Monitoramento contínuo de KPIs-chave (tráfego orgânico, taxa de conversão, CPL e avanço no funil).</li>
+              <li>Otimização contínua das LPs com base em dados de comportamento dos usuários no HubSpot.</li>
+              <li>Implementação de automação de marketing e nutrição de leads (e-mails, follow-ups e segmentação por interesse).</li>
+              <li>Estratégia de conteúdo e SEO para reforçar autoridade nos temas de sono, dores nas costas e recuperação de atletas.</li>
+              <li>Alinhamento entre marketing e vendas para acelerar o ciclo de conversão dos leads gerados.</li>
+              <li>Definição de investimento inicial para validação das LPs.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Gráfico profissional -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Gráfico Comparativo (Índice de Crescimento)</h3>
+        <span>Normalizado: Novembro = 100</span>
+      </div>
+
+      <div class="card chartWrap">
+        <svg viewBox="0 0 1020 340" width="100%" height="340" role="img" aria-label="Gráfico comparativo por índice">
+          <defs>
+            <linearGradient id="gDec" x1="0" x2="1">
+              <stop offset="0" stop-color="rgba(57,217,138,.95)"/>
+              <stop offset="1" stop-color="rgba(74,163,255,.95)"/>
+            </linearGradient>
+            <linearGradient id="gPrev" x1="0" x2="1">
+              <stop offset="0" stop-color="rgba(170,183,214,.75)"/>
+              <stop offset="1" stop-color="rgba(170,183,214,.35)"/>
+            </linearGradient>
+            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="rgba(0,0,0,.35)"/>
+            </filter>
+          </defs>
+
+          <rect x="0" y="0" width="1020" height="340" rx="18" fill="rgba(6,12,26,.25)" stroke="rgba(255,255,255,.08)"/>
+
+          <g stroke="rgba(255,255,255,.10)" stroke-width="1">
+            <line x1="78" y1="52" x2="980" y2="52"/>
+            <line x1="78" y1="102" x2="980" y2="102"/>
+            <line x1="78" y1="152" x2="980" y2="152"/>
+            <line x1="78" y1="202" x2="980" y2="202"/>
+            <line x1="78" y1="252" x2="980" y2="252"/>
+            <line x1="78" y1="302" x2="980" y2="302"/>
+          </g>
+
+          <g fill="rgba(170,183,214,.95)" font-size="12">
+            <text x="24" y="306">0</text>
+            <text x="18" y="256">100</text>
+            <text x="18" y="206">200</text>
+            <text x="18" y="156">300</text>
+            <text x="18" y="106">400</text>
+            <text x="18" y="56">500+</text>
+          </g>
+
+          <g fill="rgba(170,183,214,.95)" font-size="12">
+            <text x="105" y="330">Leads</text>
+            <text x="235" y="330">Impr.</text>
+            <text x="360" y="330">Alcance</text>
+            <text x="490" y="330">Cliques</text>
+            <text x="620" y="330">CTR</text>
+            <text x="740" y="330">Perfil</text>
+            <text x="875" y="330">Seg.</text>
+          </g>
+
+          <!-- Novembro baseline (100) -->
+          <polyline class="tipTarget tipSvg" style="pointer-events:stroke" data-tip-key="line_prev" class="tipTarget tipSvg" fill="none" stroke="url(#gPrev)" stroke-width="5"
+            points="130,252 260,252 390,252 520,252 650,252 770,252 905,252" />
+
+          <!-- Dezembro line -->
+          <polyline class="tipTarget tipSvg" style="pointer-events:stroke" data-tip-key="line_dec" class="tipTarget tipSvg" style="pointer-events:stroke" fill="none" stroke="url(#gDec)" stroke-width="5" filter="url(#softShadow)"
+            points="130,233.5 260,89.5 390,52 520,59 650,272 770,256.5 905,248" />
+
+          <g>
+            <g fill="rgba(170,183,214,.85)">
+              <circle cx="130" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_leads"/><circle cx="260" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_impr"/><circle cx="390" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_alc"/>
+              <circle cx="520" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_clicks"/><circle cx="650" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_ctr"/><circle cx="770" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_perfil"/>
+              <circle cx="905" cy="252" r="6" class="tipTarget tipSvg" data-tip-key="chart_seg"/>
+            </g>
+            <g fill="rgba(57,217,138,.95)">
+              <circle cx="130" cy="233.5" r="6" class="tipTarget tipSvg" data-tip-key="chart_leads"/>
+              <circle cx="260" cy="89.5" r="6" class="tipTarget tipSvg" data-tip-key="chart_impr"/>
+              <circle cx="390" cy="52" r="6" class="tipTarget tipSvg" data-tip-key="chart_alc"/>
+              <circle cx="520" cy="59" r="6" class="tipTarget tipSvg" data-tip-key="chart_clicks"/>
+              <circle cx="650" cy="272" r="6" class="tipTarget tipSvg" data-tip-key="chart_ctr"/>
+              <circle cx="770" cy="256.5" r="6" class="tipTarget tipSvg" data-tip-key="chart_perfil"/>
+              <circle cx="905" cy="248" r="6" class="tipTarget tipSvg" data-tip-key="chart_seg"/>
+            </g>
+          </g>
+
+          <g fill="rgba(238,243,255,.95)" font-size="12" font-weight="800">
+            <text x="114" y="220">137</text>
+            <text x="244" y="76">425</text>
+            <text x="374" y="40">500+</text>
+            <text x="504" y="47">486</text>
+            <text x="635" y="288">60</text>
+            <text x="755" y="244">91</text>
+            <text x="889" y="236">108</text>
+          </g>
+        </svg>
+
+        <div class="legend">
+          <span class="key tipTarget" data-tip-key="legend_prev"><span class="sw2" style="width:14px;height:4px;display:inline-block"></span> Novembro (baseline = 100)</span>
+          <span class="key tipTarget" data-tip-key="legend_dec"><span class="sw"></span> Dezembro (índice vs baseline)</span>
+        </div>
+        <div class="chartNote">
+          Este gráfico compara as métricas por <b>índice</b>. Ex.: 137 significa 37% acima de novembro.
+          O alcance foi “capado” visualmente em 500+ por ter crescido muito acima do baseline.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela comparativa -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Tabela de Números</h3>
+        <span>Comparação direta (Novembro x Dezembro)</span>
+      </div>
+
+      <div class="card tableCard">
+        <table>
+          <thead>
+            <tr>
+              <th>Métrica</th>
+              <th>Novembro</th>
+              <th>Dezembro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tipRow" data-tip-key="table_leads"><td>Leads</td><td>27</td><td>37</td></tr>
+            <tr class="tipRow" data-tip-key="table_invest"><td>Investimento</td><td>US$ 256,71</td><td>US$ 403,14</td></tr>
+            <tr class="tipRow" data-tip-key="table_cpl"><td>CPL</td><td>US$ 9,51</td><td>US$ 8,89</td></tr>
+            <tr class="tipRow" data-tip-key="table_impr"><td>Impressões</td><td>5.996</td><td>25.474</td></tr>
+            <tr class="tipRow" data-tip-key="table_alc"><td>Alcance</td><td>3.105</td><td>19.380</td></tr>
+            <tr class="tipRow" data-tip-key="table_clicks"><td>Cliques no link</td><td>65</td><td>316</td></tr>
+            <tr class="tipRow" data-tip-key="table_ctr"><td>CTR</td><td>2,25%</td><td>1,35%</td></tr>
+            <tr class="tipRow" data-tip-key="table_perfil"><td>Visitas ao perfil</td><td>148</td><td>134</td></tr>
+            <tr class="tipRow" data-tip-key="table_seg"><td>Seguidores</td><td>+24</td><td>+26</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Insights + Projeção -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Insights e Projeção</h3>
+        <span>Leitura estratégica do que mudou</span>
+      </div>
+
+      <div class="grid cols2">
+        <div class="good">
+          <b>O que melhorou (e por que isso importa):</b><br>
+          Dezembro confirma que a campanha escala com controle. Houve aumento forte de distribuição (alcance e impressões),
+          com crescimento consistente de cliques e aumento real de leads, ao mesmo tempo em que o CPL caiu.
+          <ul>
+            <li><b>Leads</b> subiram (+37%) e o <b>CPL</b> caiu (−6,5%) → eficiência melhor.</li>
+            <li><b>Cliques</b> cresceram muito (+386%) → capacidade de tráfego aumentou.</li>
+            <li>O conjunto de otimizações no site reduz atrito e melhora a jornada até o produto.</li>
+          </ul>
+        </div>
+
+        <div class="warn">
+          <b>Ponto de atenção (o que ajustar agora):</b><br>
+          O CTR caiu durante a escala, o que é comum quando ampliamos público. O próximo ganho grande vem de converter
+          melhor o tráfego (cliques) em lead, usando as melhorias do site e refinando mensagem por perfil:
+          atletas (recuperação), idosos (dor/coluna), dores crônicas (alívio/sono profundo).
+          <ul>
+            <li>Testar 3 ângulos criativos por público (1 por semana) e manter o melhor como “always on”.</li>
+            <li>Remarketing para quem clicou/visitou perfil (reduz custo e aumenta taxa de conversão).</li>
+            <li>Padronizar variantes (Size) para liberar filtro e facilitar decisão na loja.</li>
+          </ul>
+          <b>Projeção:</b> mantendo a distribuição de dezembro e elevando a taxa de conversão do site, a tendência é aumentar
+          leads sem crescimento proporcional no CPL.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NOVO BLOCO: FILTRO POR MÊS (NOV/DEZ) ===== -->
+    <div class="section">
+      <div class="sectionTitle">
+        <h3>Filtro por Mês</h3>
+        <span>Selecione um mês para visualizar apenas os dados daquele período</span>
+      </div>
+
+      <div class="card monthFilter">
+        <div class="monthControls">
+          <div class="selectWrap">
+            <label for="monthSelect"><b>Mês:</b></label>
+            <select id="monthSelect">
+              <option value="nov">Novembro</option>
+              <option value="dez" selected>Dezembro</option>
+            </select>
+          </div>
+
+          <a class="driveBtn" href="https://drive.google.com/drive/folders/1bHgmjgFGDfuoYtM3r7esSNT2aXnt1fC1?usp=sharing" target="_blank" rel="noopener">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M10 14a5 5 0 0 1 0-7l1.2-1.2a5 5 0 0 1 7 7L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M14 10a5 5 0 0 1 0 7l-1.2 1.2a5 5 0 0 1-7-7L7 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <b>Drive de Evidências</b>
+          </a>
+        </div>
+
+        <!-- Painel NOVEMBRO -->
+        <div id="panel-nov" class="monthPanel" style="display:none;">
+          <div class="monthPanelHeader">
+            <b>Novembro</b>
+            <span>Resumo mensal — visão direta</span>
+          </div>
+
+          <div class="monthGrid">
+            <div class="monthMini"><div class="k">Leads</div><div class="v">27</div></div>
+            <div class="monthMini"><div class="k">Investimento</div><div class="v">US$ 256,71</div></div>
+            <div class="monthMini"><div class="k">CPL</div><div class="v">US$ 9,51</div></div>
+
+            <div class="monthMini"><div class="k">Impressões</div><div class="v">5.996</div></div>
+            <div class="monthMini"><div class="k">Alcance</div><div class="v">3.105</div></div>
+            <div class="monthMini"><div class="k">Cliques no link</div><div class="v">65</div></div>
+
+            <div class="monthMini"><div class="k">CTR</div><div class="v">2,25%</div></div>
+            <div class="monthMini"><div class="k">Visitas ao perfil</div><div class="v">148</div></div>
+            <div class="monthMini"><div class="k">Seguidores</div><div class="v">+24</div></div>
+          </div>
+        </div>
+
+        <!-- Painel DEZEMBRO -->
+        <div id="panel-dez" class="monthPanel">
+          <div class="monthPanelHeader">
+            <b>Dezembro</b>
+            <span>Resumo mensal — visão direta</span>
+          </div>
+
+          <div class="monthGrid">
+            <div class="monthMini"><div class="k">Leads</div><div class="v">37</div></div>
+            <div class="monthMini"><div class="k">Investimento</div><div class="v">US$ 403,14</div></div>
+            <div class="monthMini"><div class="k">CPL</div><div class="v">US$ 8,89</div></div>
+
+            <div class="monthMini"><div class="k">Impressões</div><div class="v">25.474</div></div>
+            <div class="monthMini"><div class="k">Alcance</div><div class="v">19.380</div></div>
+            <div class="monthMini"><div class="k">Cliques no link</div><div class="v">316</div></div>
+
+            <div class="monthMini"><div class="k">CTR</div><div class="v">1,35%</div></div>
+            <div class="monthMini"><div class="k">Visitas ao perfil</div><div class="v">134</div></div>
+            <div class="monthMini"><div class="k">Seguidores</div><div class="v">+26</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function(){
+      const select = document.getElementById('monthSelect');
+      const nov = document.getElementById('panel-nov');
+      const dez = document.getElementById('panel-dez');
+
+      function render(){
+        const v = select.value;
+        if(v === 'nov'){
+          nov.style.display = '';
+          dez.style.display = 'none';
+        } else {
+          nov.style.display = 'none';
+          dez.style.display = '';
+        }
+      }
+
+      select.addEventListener('change', render);
+      render(); // inicial
+    })();
+  </script>
+  <div id="uxTip" role="tooltip" aria-hidden="true"></div>
+
+  <script>
+    window.__TIP_MAP = {
+      kpi_leads: "<div class='tTitle'>Leads</div><div class='tLine'>Contatos gerados no mês (formulários/CTAs).</div>",
+      kpi_invest: "<div class='tTitle'>Investimento</div><div class='tLine'>Total gasto em anúncios no mês.</div>",
+      kpi_cpl: "<div class='tTitle'>CPL</div><div class='tLine'>Custo por lead. Menor = mais eficiente.</div>",
+      kpi_impr: "<div class='tTitle'>Impressões</div><div class='tLine'>Exibições dos anúncios (pode repetir para a mesma pessoa).</div>",
+      kpi_alc: "<div class='tTitle'>Alcance</div><div class='tLine'>Pessoas únicas impactadas (sem repetição).</div>",
+      kpi_clicks: "<div class='tTitle'>Cliques no link</div><div class='tLine'>Cliques em “Saiba mais/Link”.</div>",
+
+      legend_prev: "<div class='tTitle'>Novembro (baseline = 100)</div><div class='tLine tMuted'>Mês de referência: no gráfico, ele vira <b>100</b> em todas as métricas.</div>",
+      legend_dec: "<div class='tTitle'>Dezembro (índice vs baseline)</div><div class='tLine tMuted'>Acima de <b>100</b> = melhorou. Abaixo de <b>100</b> = caiu.</div>",
+      line_prev: "<div class='tTitle'>Linha cinza — mês base</div><div class='tLine tMuted'>Referência fixa em 100 para comparar o mês seguinte.</div>",
+      line_dec: "<div class='tTitle'>Linha verde — mês comparado</div><div class='tLine'>Índice do mês comparado ao mês base.</div><div class='tLine tMuted'>Ex.: <b>137</b> = 37% acima do mês base.</div>",
+
+      chart_leads: "<div class='tTitle'>Leads</div><div class='tLine'><b>Novembro:</b> 27</div><div class='tLine'><b>Dezembro:</b> 37</div><div class='tLine'><b>Comparação:</b> 27 → 37 <span class='tMuted'>(+10 | +37%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>137</b></div>",
+      chart_impr: "<div class='tTitle'>Impressões</div><div class='tLine'><b>Novembro:</b> 5.996</div><div class='tLine'><b>Dezembro:</b> 25.474</div><div class='tLine'><b>Comparação:</b> 5.996 → 25.474 <span class='tMuted'>(+19.478 | +325%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>425</b></div>",
+      chart_alc: "<div class='tTitle'>Alcance</div><div class='tLine'><b>Novembro:</b> 3.105</div><div class='tLine'><b>Dezembro:</b> 19.380</div><div class='tLine'><b>Comparação:</b> 3.105 → 19.380 <span class='tMuted'>(+16.275 | +524%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>624</b></div><div class='tLine tMuted'>Obs.: no gráfico, valores acima de 500 aparecem como <b>500+</b>.</div>",
+      chart_clicks: "<div class='tTitle'>Cliques no link</div><div class='tLine'><b>Novembro:</b> 65</div><div class='tLine'><b>Dezembro:</b> 316</div><div class='tLine'><b>Comparação:</b> 65 → 316 <span class='tMuted'>(+251 | +386%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>486</b></div>",
+      chart_ctr: "<div class='tTitle'>CTR (Taxa de Cliques)</div><div class='tLine'><b>Novembro:</b> 2,25%</div><div class='tLine'><b>Dezembro:</b> 1,35%</div><div class='tLine'><b>Comparação:</b> 2,25% → 1,35% <span class='tMuted'>(−0,90 p.p. | −40%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>60</b></div>",
+      chart_perfil: "<div class='tTitle'>Visitas ao perfil</div><div class='tLine'><b>Novembro:</b> 148</div><div class='tLine'><b>Dezembro:</b> 134</div><div class='tLine'><b>Comparação:</b> 148 → 134 <span class='tMuted'>(−14 | −9%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>91</b></div>",
+      chart_seg: "<div class='tTitle'>Seguidores</div><div class='tLine'><b>Novembro:</b> +24</div><div class='tLine'><b>Dezembro:</b> +26</div><div class='tLine'><b>Comparação:</b> +24 → +26 <span class='tMuted'>(+2 | +8%)</span></div><div class='tLine tMuted'>Índice (base Novembro=100): <b>108</b></div>",
+
+      table_leads: "<div class='tTitle'>Leads</div><div class='tLine'>Quantidade de contatos capturados (formulários/CTAs).</div>",
+      table_invest: "<div class='tTitle'>Investimento</div><div class='tLine'>Gasto total em anúncios no período.</div>",
+      table_cpl: "<div class='tTitle'>CPL</div><div class='tLine'>Custo médio por lead. Menor = mais eficiente.</div>",
+      table_impr: "<div class='tTitle'>Impressões</div><div class='tLine'>Total de exibições (inclui repetição).</div>",
+      table_alc: "<div class='tTitle'>Alcance</div><div class='tLine'>Pessoas únicas impactadas (sem repetição).</div>",
+      table_clicks: "<div class='tTitle'>Cliques no link</div><div class='tLine'>Cliques no botão/“Saiba mais”/link.</div>",
+      table_ctr: "<div class='tTitle'>CTR</div><div class='tLine'>Taxa de cliques (cliques ÷ impressões).</div>",
+      table_perfil: "<div class='tTitle'>Visitas ao perfil</div><div class='tLine'>Acessos ao perfil após ver/clicar nos anúncios.</div>",
+      table_seg: "<div class='tTitle'>Seguidores</div><div class='tLine'>Novos seguidores ganhos no período.</div>"
+    };
+
+    (function(){
+      const tip = document.getElementById('uxTip');
+      if(!tip) return;
+
+      let activeEl = null;
+      let touchMode = false;
+
+      function clamp(n, min, max){ return Math.min(Math.max(n, min), max); }
+
+      function contentFor(el){
+        const key = el.getAttribute('data-tip-key');
+        if(key && window.__TIP_MAP && window.__TIP_MAP[key]) return window.__TIP_MAP[key];
+        const raw = el.getAttribute('data-tip');
+        if(!raw) return null;
+        return "<div class='tLine'>" + raw.replace(/</g,"&lt;").replace(/>/g,"&gt;") + "</div>";
+      }
+
+      function positionTo(el){
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width/2;
+
+        requestAnimationFrame(() => {
+          const w = tip.offsetWidth || 260;
+          const h = tip.offsetHeight || 70;
+
+          const left = clamp(cx, 12 + w/2, window.innerWidth - 12 - w/2);
+
+          let y = r.top - h - 12;
+          let below = false;
+          if(y < 10){
+            y = r.bottom + 12;
+            below = true;
+          }
+          tip.classList.toggle('below', below);
+
+          tip.style.left = left + 'px';
+          tip.style.top  = y + 'px';
+        });
+      }
+
+      function show(el){
+        const content = contentFor(el);
+        if(!content) return;
+        activeEl = el;
+        tip.innerHTML = content;
+        tip.classList.add('show');
+        tip.setAttribute('aria-hidden', 'false');
+        positionTo(el);
+      }
+
+      function hide(){
+        tip.classList.remove('show');
+        tip.setAttribute('aria-hidden', 'true');
+        activeEl = null;
+      }
+
+      const els = document.querySelectorAll('[data-tip-key], [data-tip]');
+      els.forEach(el => {
+        el.addEventListener('mouseenter', () => { if(!touchMode) show(el); });
+        el.addEventListener('mouseleave', () => { if(!touchMode) hide(); });
+
+        el.addEventListener('touchstart', (e) => {
+          touchMode = true;
+          if(activeEl === el) hide(); else show(el);
+          e.stopPropagation();
+        }, {passive:true});
+
+        el.addEventListener('click', (e) => {
+          if(!touchMode) return;
+          if(activeEl === el) hide(); else show(el);
+          e.stopPropagation();
+        });
+      });
+
+      window.addEventListener('scroll', () => { if(activeEl) hide(); }, {passive:true});
+      window.addEventListener('resize', () => { if(activeEl) positionTo(activeEl); }, {passive:true});
+
+      document.addEventListener('pointerdown', (e) => {
+        if(!touchMode) return;
+        const t = e.target;
+        if(t && (t.closest('[data-tip-key]') || t.closest('[data-tip]'))) return;
+        hide();
+      }, true);
+    })();
+  </script>
+
+</body>
+</html>
